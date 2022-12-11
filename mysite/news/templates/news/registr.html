@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<title>Регистрация</title>
+{% endblock %}
+
+{% block sidebar %}
+<div class="col-md-4">
+  <div class="list-group">
+      {% for i in categories %}
+      <a href="{{i.get_absolute_url}}" class="list-group-item list-group-item-action">{{i.title}}</a>
+      {% endfor %}
+      
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<h1>Регистрация</h1>
+<form method="post">
+    {% csrf_token %}
+    {{form.as_p}}
+    <button type="submit" class="btn btn-primary btn-block">Зарегистрироваться</button>
+</form>
+{% endblock %}
