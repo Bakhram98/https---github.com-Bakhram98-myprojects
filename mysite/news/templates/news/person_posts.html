@@ -17,11 +17,18 @@
 
 {% block content %}
 <h2>Посты автора {{name.user}}    
+
+  {% if name2 %}
+
   {% if prowerka_podpiski %}
-    <a href="{% url 'otpiska' user_id=name.user.pk %}" class="btn btn-primary">Отписаться</a></h2>
+    <a href="{% url 'otpiska' user_id=name.user.pk %}" class="btn btn-primary">Отписаться</a>
   {% else %}
     <a href="{% url 'podpiska' user_id=name.user.pk %}" class="btn btn-primary">Подписаться</a></h2>
   {% endif %}
+
+  {% endif %}
+  
+</h2>
 
 <div class="card nb-3">
   {% for i in person_posts %}

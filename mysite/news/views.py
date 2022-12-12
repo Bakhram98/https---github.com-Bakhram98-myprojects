@@ -91,10 +91,16 @@ def otpiska(request, user_id):  # Обработка подписки. Оста�
 
 def profil(request, user_pk):
     name = Profil.objects.get(user__pk__exact = user_pk)
-    name2 = Profil.objects.get(user__pk__exact = request.user.pk)  # Текущий пользователь
+
+    if request.user.is_authenticated:
+        name2 = Profil.objects.get(user__pk__exact = request.user.pk)  # Текущий пользователь
+        prowerka_podpiski = name2.podpiski.filter(pk = name.user.pk).exists()
+    else:
+        name2 = False
+        prowerka_podpiski = False
+
     profil_posts = News.objects.filter(author__user__pk__exact = user_pk)
     categories = Category.objects.all()
-    prowerka_podpiski = name2.podpiski.filter(pk = name.user.pk).exists()
     context = {'person_posts': profil_posts, 'categories' : categories, 'name': name, 'name2': name2, 'prowerka_podpiski': prowerka_podpiski}
     return render(request, 'news/person_posts.html', context)    
 
