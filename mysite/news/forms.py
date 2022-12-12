@@ -24,7 +24,7 @@ class UserRegistrForm(UserCreationForm): # Так мы создаём форму
 class NewsForm(forms.ModelForm):
     class Meta:  #  Здесь опичываем то, как должна выглядеть наша форма
         model = News
-        fields = ['title', 'content', 'is_published', 'category']  #  Здесь те поля из таблицы, которые будут в форме
+        fields = ['title', 'content', 'photo', 'is_published', 'category']  #  Здесь те поля из таблицы, которые будут в форме
         widgets = {    #   Для отображения в бутстрапе
             'title' : forms.TextInput(attrs={"class": "form-control"}),
             'content' : forms.Textarea(attrs={"class": "form-control"})

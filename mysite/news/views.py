@@ -55,32 +55,56 @@ def show_news(request, news_id):
     context = {'tek_novost': tek_news, 'categories' : categories}
     return render(request, 'news/tek_novost.html', context)  
 
+def my_podpiski(request, user_pk):
+    podpiski = Profil.objects.get(user__pk__exact = user_pk).podpiski.all()
+    podpiski2 = []
+    for i in podpiski:
+        name = Profil.objects.get(user__pk__exact = i.pk)
+        podpiski2.append(name)
+    context = {'podpiski': podpiski2}
+    return render(request, 'news/my_podpiski.html', context)  
+
 def authors(request):
     authors = Profil.objects.all()
     context = {'authors': authors}
-    return render(request, 'news/authors.html', context)  
+    return render(request, 'news/authors.html', context)     
 
-def podpiska(request, user_id):
+def podpiska(request, user_id):  # Обработка подписки. Остаёмся на том же шаблоне со списком постов этого автора
     name = Profil.objects.get(user__pk__exact = user_id)  # Тот пользователь, на которого будем подписываться
     name2 = Profil.objects.get(user__pk__exact = request.user.pk)  # Текущий пользователь
     name2.podpiski.add(name.user)
+    prowerka_podpiski = name2.podpiski.filter(pk = name.user.pk).exists()
     profil_posts = News.objects.filter(author__user__pk__exact = user_id)
     categories = Category.objects.all()
-    context = {'person_posts': profil_posts, 'categories' : categories, 'name': name}
+    context = {'person_posts': profil_posts, 'categories' : categories, 'name': name, 'name2': name2, 'prowerka_podpiski': prowerka_podpiski}
+    return render(request, 'news/person_posts.html', context)      
+
+def otpiska(request, user_id):  # Обработка подписки. Остаёмся на том же шаблоне со списком постов этого автора
+    name = Profil.objects.get(user__pk__exact = user_id)  # Тот пользователь, от которого будем подписываться
+    name2 = Profil.objects.get(user__pk__exact = request.user.pk) # Текущий пользователь
+    name2.podpiski.remove(name.user)
+    prowerka_podpiski = name2.podpiski.filter(pk = name.user.pk).exists()
+    profil_posts = News.objects.filter(author__user__pk__exact = user_id)
+    categories = Category.objects.all()
+    context = {'person_posts': profil_posts, 'categories' : categories, 'name': name, 'name2': name2, 'prowerka_podpiski': prowerka_podpiski}
     return render(request, 'news/person_posts.html', context)       
 
 def profil(request, user_pk):
     name = Profil.objects.get(user__pk__exact = user_pk)
+    name2 = Profil.objects.get(user__pk__exact = request.user.pk)  # Текущий пользователь
     profil_posts = News.objects.filter(author__user__pk__exact = user_pk)
     categories = Category.objects.all()
-    context = {'person_posts': profil_posts, 'categories' : categories, 'name': name}
+    prowerka_podpiski = name2.podpiski.filter(pk = name.user.pk).exists()
+    context = {'person_posts': profil_posts, 'categories' : categories, 'name': name, 'name2': name2, 'prowerka_podpiski': prowerka_podpiski}
     return render(request, 'news/person_posts.html', context)    
 
 def person(request, person_pk):
     name = Profil.objects.get(user__pk__exact = person_pk)
+    name2 = Profil.objects.get(user__pk__exact = request.user.pk)  # Текущий пользователь
     person_posts = News.objects.filter(author__user__pk__exact = person_pk)
     categories = Category.objects.all()
-    context = {'person_posts': person_posts, 'categories' : categories, 'name': name}
+    prowerka_podpiski = name2.podpiski.filter(pk = name.user.pk).exists()
+    context = {'person_posts': person_posts, 'categories' : categories, 'name': name, 'name2': name2, 'prowerka_podpiski': prowerka_podpiski}
     return render(request, 'news/person_posts.html', context)     
 
 def user_login(request):
@@ -124,7 +148,7 @@ def add_news(request):
     form = NewsForm()
     if request.method == 'POST':
         
-        form = NewsForm(request.POST)
+        form = NewsForm(request.POST, request.FILES)
         if form.is_valid():  #  Если даные проходят валидацию, то все данные попадают в словарь form.cleaned_data
             news = form.save(commit= False)
 

@@ -28,6 +28,9 @@
               {% endif %}
               <li class="nav-item"><a class="nav-link" href="{% url 'add_news' %}">Добавить пост</a></li>
               <li class="nav-item"><a class="nav-link" href="{% url 'authors' %}">Авторы</a></li>
+              {% if user.is_authenticated %}
+              <li class="nav-item"><a class="nav-link" href="{% url 'my_podpiski' user_pk=request.user.pk %}">Мои подписки</a></li>
+              {% endif %}
             </ul>
 
         </div>
